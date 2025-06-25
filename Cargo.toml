@@ -15,13 +15,13 @@ keywords = ["egui", "gui", "widget", "panels", "resize"]
 categories = ["gui"]
 include = [
     "assets/**/*",
-    "demos/*/Cargo.toml",
-    "demos/*/Cargo.lock",
-    "**/*.rs",
+    "examples/**/*",
+    "src/**/*",
     "Cargo.toml",
     "README.md",
     "LICENSE-*",
 ]
+
 [features]
 # for developers, adds overlays on various elements to aid with debugging
 layout_debugging = []
