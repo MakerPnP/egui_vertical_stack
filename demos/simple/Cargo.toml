@@ -7,6 +7,3 @@ edition = "2024"
 egui = "0.31.1"
 eframe = "0.31.1"
 egui_vertical_stack = { path = "../.."}
-
-# cargo workaround
-[workspace]
