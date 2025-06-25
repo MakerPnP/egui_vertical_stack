@@ -12,6 +12,7 @@ authors = [
 description = "A vertical stack widget with resize handles for egui"
 readme = "README.md"
 keywords = ["egui", "gui", "widget", "panels", "resize"]
+categories = ["gui"]
 include = [
     "assets/**/*",
     "demos/*/Cargo.toml",
