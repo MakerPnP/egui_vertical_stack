@@ -106,7 +106,7 @@ impl VerticalStack {
     }
 
     /// Sets a custom ID salt for the stack.
-    pub fn id_salt(&mut self, id: impl std::hash::Hash) -> &mut Self {
+    pub fn id_salt(&mut self, id: impl Hash) -> &mut Self {
         self.id_source = Id::new(id);
         self
     }
@@ -292,9 +292,9 @@ impl VerticalStack {
                 // Get the available rect for the panel content
                 let panel_rect = ui.available_rect_before_wrap();
 
-                for (idx, (hash, mut panel_fn)) in body.panels.into_iter().enumerate() {
+                for (idx, (id, mut panel_fn)) in body.panels.into_iter().enumerate() {
                     // Get panel height (already has min_height applied above)
-                    let panel_height = *self.panel_heights.get(&hash).unwrap();
+                    let panel_height = *self.panel_heights.get(&id).unwrap();
 
                     let desired_size = Vec2::new(panel_rect.width(), panel_height);
                     ui.allocate_ui(desired_size, |ui| {
@@ -350,13 +350,13 @@ impl VerticalStack {
                         panel_fn(&mut panel_ui);
                     });
 
-                    self.add_resize_handle_no_gap(ui, idx, inner_margin, &hash);
+                    self.add_resize_handle(ui, idx, &id);
                 }
             });
     }
 
-    fn add_resize_handle_no_gap(&mut self, ui: &mut Ui, panel_idx: usize, inner_margin: f32, id: &Id) {
-        let handle_height = 7.0; // Keep this as 7 pixels total
+    fn add_resize_handle(&mut self, ui: &mut Ui, panel_idx: usize, id: &Id) {
+        let handle_height = 7.0;
 
         // For the last panel handle, we don't need to check the next panel's index
         let is_last_panel = panel_idx == self.panel_heights.len() - 1;
