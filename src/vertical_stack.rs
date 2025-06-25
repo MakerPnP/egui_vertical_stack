@@ -3,7 +3,9 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use egui::scroll_area::ScrollBarVisibility;
-use egui::{Color32, CornerRadius, Id, Rect, ScrollArea, Sense, Stroke, StrokeKind, Ui, UiBuilder, Vec2};
+use egui::{
+    Color32, CornerRadius, Id, PointerButton, Rect, ScrollArea, Sense, Stroke, StrokeKind, Ui, UiBuilder, Vec2,
+};
 
 /// A component that displays multiple panels stacked vertically, each with resize handles, all contained within
 /// a scroll area.
@@ -90,7 +92,6 @@ pub struct VerticalStack {
     // dragging state
     //
     active_drag_handle: Option<usize>,
-    drag_in_progress: bool,
     drag_start_y: Option<f32>,
     drag_start_height: Option<f32>,
 
@@ -116,7 +117,6 @@ impl VerticalStack {
             content_sizes: HashMap::new(),
 
             active_drag_handle: None,
-            drag_in_progress: false,
             drag_start_y: None,
             drag_start_height: None,
 
@@ -275,10 +275,12 @@ impl VerticalStack {
         let inner_margin = 4.0;
 
         // Handle drag state
-        let pointer_is_down = ui.input(|i| i.pointer.any_down());
+        let pointer_is_down = ui.input(|i| {
+            i.pointer
+                .button_down(PointerButton::Primary)
+        });
 
-        if self.drag_in_progress && !pointer_is_down {
-            self.drag_in_progress = false;
+        if self.active_drag_handle.is_some() && !pointer_is_down {
             self.active_drag_handle = None;
         }
 
@@ -440,7 +442,6 @@ impl VerticalStack {
 
         // Handle drag start
         if response.drag_started() {
-            self.drag_in_progress = true;
             self.active_drag_handle = Some(panel_idx);
 
             // Store initial values
@@ -453,7 +454,7 @@ impl VerticalStack {
         }
 
         // Handle ongoing drag
-        if is_active_handle && self.drag_in_progress && response.dragged() {
+        if is_active_handle && response.dragged() {
             if let (Some(start_y), Some(start_height)) = (self.drag_start_y, self.drag_start_height) {
                 if let Some(current_pos) = ui.ctx().pointer_latest_pos() {
                     let panel_height = self.panel_heights.get_mut(id).unwrap();
@@ -477,7 +478,6 @@ impl VerticalStack {
 
         // Handle drag end
         if is_active_handle && response.drag_stopped() {
-            self.drag_in_progress = false;
             self.active_drag_handle = None;
             self.drag_start_y = None;
             self.drag_start_height = None;
