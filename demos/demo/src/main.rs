@@ -61,6 +61,21 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        eframe::egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+            eframe::egui::menu::bar(ui, |ui| {
+                eframe::egui::Sides::new().show(
+                    ui,
+                    |ui| {
+                        ui.label("Vertical panel layout demo.");
+                    },
+                    |ui| {
+                        egui::widgets::global_theme_preference_switch(ui);
+                    },
+                );
+
+            });
+        });
+        
         egui::SidePanel::left("left_panel")
             .default_width(150.0)
             .show(ctx, |ui| {
@@ -138,8 +153,6 @@ impl eframe::App for MyApp {
         });
         
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.label("Vertical panel layout demo.");
-            ui.add_space(10.0);
             ui.label("Use the drag handles below each panel to re-size the panel above the handle.");
             ui.add_space(10.0);
             Frame::group(&Style::default())

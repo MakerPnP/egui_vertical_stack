@@ -406,16 +406,17 @@ impl VerticalStack {
         // Calculate exact position for the 1px line with 3px padding above and below
         let painter = ui.painter();
         let handle_stroke = if response.hovered() || response.dragged() {
-            Stroke::new(1.0, Color32::WHITE)
+            ui.style()
+                .visuals
+                .widgets
+                .active
+                .fg_stroke
         } else {
-            Stroke::new(
-                1.0,
-                ui.visuals()
-                    .widgets
-                    .noninteractive
-                    .bg_stroke
-                    .color,
-            )
+            ui.style()
+                .visuals
+                .widgets
+                .noninteractive
+                .bg_stroke
         };
 
         // Position line exactly in the middle of the handle area
