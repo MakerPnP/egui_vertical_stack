@@ -2,7 +2,25 @@
 name = "egui_vertical_stack"
 version = "0.1.0"
 edition = "2024"
-
+documentation = "https://docs.rs/egui_vertical_stack"
+repository = "https://github.com/MakerPnP/egui_vertical_stack"
+homepage = "https://github.com/MakerPnP/egui_vertical_stack"
+license = "MIT OR Apache-2.0"
+authors = [
+    "Dominic Clifton <me@dominicclifton.name>"
+]
+description = "A vertical stack widget with resize handles for egui"
+readme = "README.md"
+keywords = ["egui", "gui", "widget", "panels", "resize"]
+include = [
+    "assets/**/*",
+    "demos/*/Cargo.toml",
+    "demos/*/Cargo.lock",
+    "**/*.rs",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE-*",
+]
 [features]
 # for developers, adds overlays on various elements to aid with debugging
 layout_debugging = []
