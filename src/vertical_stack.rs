@@ -68,40 +68,60 @@ use egui::{Color32, CornerRadius, Id, Rect, ScrollArea, Sense, Stroke, StrokeKin
 /// For a more complete example, check out the `demos` folder in the source.
 #[derive(Debug)]
 pub struct VerticalStack {
-    min_panel_height: f32,
+    //
+    // settings
+    //
     id_source: Id,
-    panel_heights: HashMap<Id, f32>,
+    /// Maximum height for the scroll area.
+    max_height: Option<f32>,
+    min_panel_height: f32,
+    max_panel_height: Option<f32>,
     default_panel_height: f32,
-    drag_in_progress: bool,
+    scroll_bar_visibility: ScrollBarVisibility,
+
+    //
+    // from sizing pass
+    //
+    panel_heights: HashMap<Id, f32>,
+    /// (width, height)
+    content_sizes: HashMap<Id, (f32, f32)>,
+
+    //
+    // dragging state
+    //
     active_drag_handle: Option<usize>,
+    drag_in_progress: bool,
     drag_start_y: Option<f32>,
     drag_start_height: Option<f32>,
+
+    //
+    // other state
+    //
     initialized: bool,
     last_available_height: f32,
-    max_height: Option<f32>,
-    max_panel_height: Option<f32>,
-    content_sizes: HashMap<Id, (f32, f32)>,
-    scroll_bar_visibility: ScrollBarVisibility,
     last_panel_count: usize,
 }
 
 impl VerticalStack {
     pub fn new() -> Self {
         Self {
-            min_panel_height: 50.0,
             id_source: Id::new("vertical_stack"),
-            panel_heights: HashMap::new(),
+            max_height: None,
+            min_panel_height: 50.0,
+            max_panel_height: None,
             default_panel_height: 100.0,
-            drag_in_progress: false,
+            scroll_bar_visibility: ScrollBarVisibility::VisibleWhenNeeded,
+
+            panel_heights: HashMap::new(),
+            content_sizes: HashMap::new(),
+
             active_drag_handle: None,
+            drag_in_progress: false,
             drag_start_y: None,
             drag_start_height: None,
+
             initialized: false,
             last_available_height: 0.0,
-            max_height: None,
-            max_panel_height: None,
-            content_sizes: HashMap::new(),
-            scroll_bar_visibility: ScrollBarVisibility::VisibleWhenNeeded,
             last_panel_count: 0,
         }
     }
