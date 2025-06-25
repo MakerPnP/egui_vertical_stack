@@ -5,7 +5,8 @@ use std::hash::Hash;
 use egui::scroll_area::ScrollBarVisibility;
 use egui::{Color32, CornerRadius, Id, Rect, ScrollArea, Sense, Stroke, StrokeKind, Ui, UiBuilder, Vec2};
 
-/// A component that displays multiple panels stacked vertically with resize handles contained within a scroll area.
+/// A component that displays multiple panels stacked vertically, each with resize handles, all contained within
+/// a scroll area.
 ///
 /// This is very useful for layouts that need multiple 'panel' views.
 ///
