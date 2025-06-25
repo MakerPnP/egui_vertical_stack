@@ -242,9 +242,6 @@ impl VerticalStack {
                 self.content_sizes
                     .insert(*hash, (content_rect.width(), content_height));
 
-                // FIXME remove this constraint, allow the panel to be clipped!
-                panel_height = panel_height.max(content_height);
-
                 // Update the panel height
                 self.panel_heights
                     .insert(*hash, panel_height);
@@ -333,24 +330,26 @@ impl VerticalStack {
                         );
 
                         let content_rect = frame_rect.shrink(inner_margin);
-                        ui.allocate_new_ui(UiBuilder::new().max_rect(content_rect), |ui| {
-                            #[cfg(feature = "layout_debugging")]
-                            {
-                                let debug_stroke = Stroke::new(1.0, Color32::RED);
-                                ui.painter().rect(
-                                    content_rect,
-                                    CornerRadius::ZERO,
-                                    Color32::TRANSPARENT,
-                                    debug_stroke,
-                                    StrokeKind::Outside,
-                                );
-                            }
+                        let mut panel_ui = ui.new_child(UiBuilder::new().max_rect(content_rect));
 
-                            panel_fn(ui);
-                        });
+                        // Intersect the clip rectangles to prevent the last panel content overflowing the bottom of
+                        // the scroll area when a maximum height is set on the scroll area.
+                        let panel_rect = content_rect.intersect(ui.clip_rect());
+                        #[cfg(feature = "layout_debugging")]
+                        {
+                            let debug_stroke = Stroke::new(1.0, Color32::GREEN);
+                            ui.painter().rect(
+                                panel_rect,
+                                CornerRadius::ZERO,
+                                Color32::TRANSPARENT,
+                                debug_stroke,
+                                StrokeKind::Outside,
+                            );
+                        }
+                        panel_ui.set_clip_rect(panel_rect);
+                        panel_fn(&mut panel_ui);
                     });
 
-                    //ui.allocate_exact_size(Vec2::new(panel_rect.width(), 2.0), Sense::hover());
                     self.add_resize_handle_no_gap(ui, idx, inner_margin, &hash);
                 }
             });
@@ -448,11 +447,6 @@ impl VerticalStack {
                     if let Some(max_panel_height) = self.max_panel_height {
                         new_height = new_height.min(max_panel_height);
                     }
-
-                    let content_size = self.content_sizes.get_mut(id).unwrap();
-                    let content_height = content_size.1;
-                    // FIXME remove this constraint, allow the panel to be clipped!
-                    new_height = new_height.max(content_height);
 
                     // Update the panel height
                     *panel_height = new_height;
