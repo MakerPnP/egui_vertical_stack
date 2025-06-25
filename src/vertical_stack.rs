@@ -437,9 +437,6 @@ impl VerticalStack {
             painter.rect_stroke(rect, 0.0, debug_stroke, StrokeKind::Outside);
         }
 
-        // Check if this is the active drag handle
-        let is_active_handle = self.active_drag_handle == Some(panel_idx);
-
         // Handle drag start
         if response.drag_started() {
             self.active_drag_handle = Some(panel_idx);
@@ -451,10 +448,19 @@ impl VerticalStack {
                 let panel_height = *self.panel_heights.get(id).unwrap();
                 self.drag_start_height = Some(panel_height);
             }
+            return;
+        }
+
+        // Check if this is the active drag handle
+        let is_active_handle = self.active_drag_handle == Some(panel_idx);
+
+        if !is_active_handle {
+            // Nothing else to do
+            return;
         }
 
         // Handle ongoing drag
-        if is_active_handle && response.dragged() {
+        if response.dragged() {
             if let (Some(start_y), Some(start_height)) = (self.drag_start_y, self.drag_start_height) {
                 if let Some(current_pos) = ui.ctx().pointer_latest_pos() {
                     let panel_height = self.panel_heights.get_mut(id).unwrap();
@@ -477,7 +483,7 @@ impl VerticalStack {
         }
 
         // Handle drag end
-        if is_active_handle && response.drag_stopped() {
+        if response.drag_stopped() {
             self.active_drag_handle = None;
             self.drag_start_y = None;
             self.drag_start_height = None;
