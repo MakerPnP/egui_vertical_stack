@@ -14,6 +14,8 @@ struct MyApp {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 struct VerticalStackSettings {
+    framed: bool,
+    inner_margin: f32,
     min_panel_height: f32,
     default_panel_height: f32,
     max_panel_height: Option<f32>,
@@ -23,6 +25,8 @@ struct VerticalStackSettings {
 impl Default for VerticalStackSettings {
     fn default() -> Self {
         Self {
+            framed: true,
+            inner_margin: 4.0,
             min_panel_height: 50.0,
             default_panel_height: 150.0,
             max_panel_height: Some(300.0),
@@ -52,6 +56,8 @@ impl MyApp {
     
     pub fn make_vertical_stack(settings: &VerticalStackSettings) -> VerticalStack {
         VerticalStack::new()
+            .framed(settings.framed)
+            .inner_margin(settings.inner_margin)
             .min_panel_height(settings.min_panel_height)
             .default_panel_height(settings.default_panel_height)
             .max_panel_height(settings.max_panel_height)
@@ -188,6 +194,10 @@ impl eframe::App for MyApp {
                     ui.label("Note: this will reset the layout of the panels.");
                     
                     let initial_settings = self.vertical_stack_settings;
+
+                    ui.checkbox(&mut self.vertical_stack_settings.framed, "Framed");
+                    
+                    ui.add(egui::Slider::new(&mut self.vertical_stack_settings.inner_margin, 0.0..=50.0).text("Inner margin"));
                     
                     ui.add(egui::Slider::new(&mut self.vertical_stack_settings.min_panel_height, 0.0..=1000.0).text("Min panel height"));
                     

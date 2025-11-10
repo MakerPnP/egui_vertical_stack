@@ -3,9 +3,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use egui::scroll_area::ScrollBarVisibility;
-use egui::{
-    Color32, CornerRadius, Id, PointerButton, Rect, ScrollArea, Sense, Stroke, StrokeKind, Ui, UiBuilder, Vec2,
-};
+use egui::{Color32, CornerRadius, Id, PointerButton, Rect, ScrollArea, Sense, StrokeKind, Ui, UiBuilder, Vec2};
 
 /// A component that displays multiple panels stacked vertically, each with resize handles, all contained within
 /// a scroll area.
@@ -80,6 +78,8 @@ pub struct VerticalStack {
     max_panel_height: Option<f32>,
     default_panel_height: f32,
     scroll_bar_visibility: ScrollBarVisibility,
+    framed: bool,
+    inner_margin: f32,
 
     //
     // from sizing pass
@@ -112,6 +112,8 @@ impl VerticalStack {
             max_panel_height: None,
             default_panel_height: 100.0,
             scroll_bar_visibility: ScrollBarVisibility::VisibleWhenNeeded,
+            inner_margin: 4.0,
+            framed: true,
 
             panel_heights: HashMap::new(),
             content_sizes: HashMap::new(),
@@ -129,6 +131,16 @@ impl VerticalStack {
     /// Sets a custom ID salt for the stack.
     pub fn id_salt(&mut self, id: impl Hash) -> &mut Self {
         self.id_source = Id::new(id);
+        self
+    }
+
+    pub fn inner_margin(mut self, inner_margin: f32) -> Self {
+        self.inner_margin = inner_margin;
+        self
+    }
+
+    pub fn framed(mut self, framed: bool) -> Self {
+        self.framed = framed;
         self
     }
 
@@ -272,8 +284,6 @@ impl VerticalStack {
 
     /// Render the actual UI with known content heights
     fn do_render_pass(&mut self, ui: &mut Ui, body: StackBodyBuilder, available_height: f32) {
-        let inner_margin = 4.0;
-
         // Handle drag state
         let pointer_is_down = ui.input(|i| {
             i.pointer
@@ -315,6 +325,9 @@ impl VerticalStack {
                 // Get the available rect for the panel content
                 let panel_rect = ui.available_rect_before_wrap();
 
+                let style = ui.style();
+                let frame_stroke = style.visuals.widgets.noninteractive.bg_stroke;
+
                 for (idx, (id, mut panel_fn)) in body.panels.into_iter().enumerate() {
                     // Get panel height (already has min_height applied above)
                     let panel_height = *self.panel_heights.get(&id).unwrap();
@@ -324,8 +337,13 @@ impl VerticalStack {
                         // Set a min height for the panel content
                         ui.set_min_height(panel_height);
 
-                        let frame_stroke_width = 1.0;
-                        let intial_frame_width = max_content_width + ((inner_margin + frame_stroke_width) * 2.0);
+                        let stroke_width = if self.framed {
+                            frame_stroke.width
+                        } else {
+                            0_f32
+                        };
+
+                        let intial_frame_width = max_content_width + ((self.inner_margin + stroke_width) * 2.0);
                         let frame_width = intial_frame_width.max(scroll_area_rect_before_wrap.width());
 
                         // without this, the right hand side of the frame will not be visible when the scroll area is narrower than the content
@@ -336,23 +354,17 @@ impl VerticalStack {
                         frame_rect.max.x = frame_rect.min.x + frame_width;
                         frame_rect.max.y = frame_rect.min.y + panel_height;
 
-                        let stroke = Stroke::new(
-                            frame_stroke_width,
-                            ui.visuals()
-                                .widgets
-                                .noninteractive
-                                .bg_stroke
-                                .color,
-                        );
-                        ui.painter().rect(
-                            frame_rect,
-                            CornerRadius::ZERO,
-                            Color32::TRANSPARENT,
-                            stroke,
-                            StrokeKind::Outside,
-                        );
+                        if self.framed {
+                            ui.painter().rect(
+                                frame_rect,
+                                CornerRadius::ZERO,
+                                Color32::TRANSPARENT,
+                                frame_stroke,
+                                StrokeKind::Outside,
+                            );
+                        }
 
-                        let content_rect = frame_rect.shrink(inner_margin);
+                        let content_rect = frame_rect.shrink(self.inner_margin);
                         let mut panel_ui = ui.new_child(UiBuilder::new().max_rect(content_rect));
 
                         // Intersect the clip rectangles to prevent the last panel content overflowing the bottom of
