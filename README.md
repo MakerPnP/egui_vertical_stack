@@ -43,6 +43,12 @@ Available under APACHE *or* MIT licenses.
 
 * Dominic Clifton - Project founder and primary maintainer.
 
+## Changelog
+
+### 0.3.0
+
+- Add support for egui 0.34.0.
+
 ## Timeline
 
 2025/06/23 - This originally started as a crate in the MakerPnP main repository.

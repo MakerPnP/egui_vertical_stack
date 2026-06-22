@@ -37,7 +37,7 @@ impl Default for VerticalStackSettings {
 
 impl MyApp {
     pub fn new(cc: &CreationContext) -> Self {
-        cc.egui_ctx.style_mut(|style| {
+        cc.egui_ctx.global_style_mut(|style| {
             // Set solid scrollbars for the entire app
             style.spacing.scroll = eframe::egui::style::ScrollStyle::solid();
 
@@ -66,9 +66,9 @@ impl MyApp {
 }
 
 impl eframe::App for MyApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        eframe::egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            eframe::egui::menu::bar(ui, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::Panel::top("top_panel").show_inside(ui, |ui| {
+            egui::MenuBar::new().ui(ui, |ui| {
                 eframe::egui::Sides::new().show(
                     ui,
                     |ui| {
@@ -82,9 +82,9 @@ impl eframe::App for MyApp {
             });
         });
         
-        egui::SidePanel::left("left_panel")
-            .default_width(150.0)
-            .show(ctx, |ui| {
+        egui::Panel::left("left_panel")
+            .default_size(150.0)
+            .show_inside(ui, |ui| {
                     self.vertical_stack
                         .id_salt(ui.id().with("vertical_stack"))
                         .body(ui, {
@@ -141,7 +141,7 @@ impl eframe::App for MyApp {
                     ui.label("This label is below the stack");
             });
         
-        egui::SidePanel::right("right_panel").show(ctx, |ui| {
+        egui::Panel::right("right_panel").show_inside(ui, |ui| {
             ui.heading("Right Panel");
 
             // Scrollable content
@@ -158,7 +158,7 @@ impl eframe::App for MyApp {
             ui.label("This label is below the scroll area.");
         });
         
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             ui.label("Use the drag handles below each panel to re-size the panel above the handle.");
             ui.add_space(10.0);
             Frame::group(&Style::default())
