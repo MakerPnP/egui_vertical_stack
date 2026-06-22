@@ -16,18 +16,18 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-       egui::Panel::left("left_panel").show_inside(ui, |ui| {
+        egui::Panel::left("left_panel").show_inside(ui, |ui| {
             self.vertical_stack
                 .id_salt(ui.id().with("vertical_stack"))
-                .body(ui, |body|{
-                    body.add_panel("top", |ui|{
+                .body(ui, |body| {
+                    body.add_panel("top", |ui| {
                         ui.label("top");
                     });
-                    body.add_panel("middle", |ui|{
+                    body.add_panel("middle", |ui| {
                         ui.style_mut().wrap_mode = Some(eframe::egui::TextWrapMode::Extend);
                         ui.label("middle with some non-wrapping text");
                     });
-                    body.add_panel("bottom", |ui|{
+                    body.add_panel("bottom", |ui| {
                         ui.label("bottom");
                     });
                 });
@@ -40,5 +40,9 @@ impl eframe::App for MyApp {
 
 fn main() -> eframe::Result {
     let native_options = eframe::NativeOptions::default();
-    eframe::run_native("egui_vertical_stack - Simple", native_options, Box::new(|_cc| Ok(Box::new(MyApp::new()))))
+    eframe::run_native(
+        "egui_vertical_stack - Simple",
+        native_options,
+        Box::new(|_cc| Ok(Box::new(MyApp::new()))),
+    )
 }

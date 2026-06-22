@@ -326,7 +326,11 @@ impl VerticalStack {
                 let panel_rect = ui.available_rect_before_wrap();
 
                 let style = ui.style();
-                let frame_stroke = style.visuals.widgets.noninteractive.bg_stroke;
+                let frame_stroke = style
+                    .visuals
+                    .widgets
+                    .noninteractive
+                    .bg_stroke;
 
                 for (idx, (id, mut panel_fn)) in body.panels.into_iter().enumerate() {
                     // Get panel height (already has min_height applied above)
@@ -337,11 +341,7 @@ impl VerticalStack {
                         // Set a min height for the panel content
                         ui.set_min_height(panel_height);
 
-                        let stroke_width = if self.framed {
-                            frame_stroke.width
-                        } else {
-                            0_f32
-                        };
+                        let stroke_width = if self.framed { frame_stroke.width } else { 0_f32 };
 
                         let intial_frame_width = max_content_width + ((self.inner_margin + stroke_width) * 2.0);
                         let frame_width = intial_frame_width.max(scroll_area_rect_before_wrap.width());
