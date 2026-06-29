@@ -32,8 +32,8 @@ use egui::{Color32, CornerRadius, Id, PointerButton, Rect, ScrollArea, Sense, St
 /// }
 ///
 /// impl eframe::App for MyApp {
-///     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-///         egui::SidePanel::left("left_panel").show(ctx, |ui| {
+///     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+///         egui::Panel::left("left_panel").show(ui, |ui| {
 ///             self.vertical_stack
 ///                 .id_salt(ui.id().with("vertical_stack"))
 ///                 .body(ui, |body|{
@@ -54,7 +54,7 @@ use egui::{Color32, CornerRadius, Id, PointerButton, Rect, ScrollArea, Sense, St
 ///                     });
 ///                 });
 ///         });
-///         egui::CentralPanel::default().show(ctx, |ui| {
+///         egui::CentralPanel::default().show(ui, |ui| {
 ///             ui.label("main content");
 ///         });
 ///     }
