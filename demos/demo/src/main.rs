@@ -67,7 +67,7 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        egui::Panel::top("top_panel").show_inside(ui, |ui| {
+        egui::Panel::top("top_panel").show(ui, |ui| {
             egui::MenuBar::new().ui(ui, |ui| {
                 eframe::egui::Sides::new().show(
                     ui,
@@ -83,7 +83,7 @@ impl eframe::App for MyApp {
 
         egui::Panel::left("left_panel")
             .default_size(150.0)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 self.vertical_stack
                     .id_salt(ui.id().with("vertical_stack"))
                     .body(ui, {
@@ -144,7 +144,7 @@ impl eframe::App for MyApp {
                 ui.label("This label is below the stack");
             });
 
-        egui::Panel::right("right_panel").show_inside(ui, |ui| {
+        egui::Panel::right("right_panel").show(ui, |ui| {
             ui.heading("Right Panel");
 
             // Scrollable content
@@ -161,7 +161,7 @@ impl eframe::App for MyApp {
             ui.label("This label is below the scroll area.");
         });
 
-        egui::CentralPanel::default().show_inside(ui, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             ui.label("Use the drag handles below each panel to re-size the panel above the handle.");
             ui.add_space(10.0);
             Frame::group(&Style::default()).show(ui, |ui| {

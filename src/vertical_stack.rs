@@ -1,5 +1,6 @@
 use std::boxed::Box;
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::hash::Hash;
 
 use egui::scroll_area::ScrollBarVisibility;
@@ -129,7 +130,7 @@ impl VerticalStack {
     }
 
     /// Sets a custom ID salt for the stack.
-    pub fn id_salt(&mut self, id: impl Hash) -> &mut Self {
+    pub fn id_salt(&mut self, id: impl Hash + Debug) -> &mut Self {
         self.id_source = Id::new(id);
         self
     }
@@ -517,7 +518,7 @@ impl StackBodyBuilder {
     ///
     /// Panels can be conditionally added/removed at runtime by calling/not-calling this method.
     /// Panels are added to the stack in the same order as the calls to `add_panel`
-    pub fn add_panel<F>(&mut self, id_salt: impl Hash, add_contents: F)
+    pub fn add_panel<F>(&mut self, id_salt: impl Hash + Debug, add_contents: F)
     where
         F: FnMut(&mut Ui) + 'static,
     {
